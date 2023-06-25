@@ -20,9 +20,9 @@
 		]
 	},
 	"mixins": [
-		"modid.mixins.json",
+		"reorganized.mixins.json",
 		{
-			"config": "modid.client.mixins.json",
+			"config": "reorganized.client.mixins.json",
 			"environment": "client"
 		}
 	],
