@@ -1,4 +1,4 @@
-package com.example;
+package net.bunten;
 
 import net.fabricmc.api.ModInitializer;
 

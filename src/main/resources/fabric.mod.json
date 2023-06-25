@@ -13,10 +13,10 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"com.example.ExampleMod"
+			"net.bunten.ExampleMod"
 		],
 		"client": [
-			"com.example.ExampleModClient"
+			"net.bunten.ExampleModClient"
 		]
 	},
 	"mixins": [
