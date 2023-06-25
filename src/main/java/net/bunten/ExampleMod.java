@@ -13,6 +13,6 @@ public class ExampleMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info(MOD_ID + " IS LOADED BIG MOTHER FUCKER");
+        LOGGER.info(MOD_ID + " IS LOADED BIG MOTHER FUCKER!");
     }
 }
