@@ -13,18 +13,11 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"net.bunten.ExampleMod"
-		],
-		"client": [
-			"net.bunten.ExampleModClient"
+			"net.bunten.reorganized.Reorganized"
 		]
 	},
 	"mixins": [
-		"reorganized.mixins.json",
-		{
-			"config": "reorganized.client.mixins.json",
-			"environment": "client"
-		}
+		"reorganized.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.14.21",

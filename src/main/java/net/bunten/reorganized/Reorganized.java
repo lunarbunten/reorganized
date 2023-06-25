@@ -1,11 +1,11 @@
-package net.bunten;
+package net.bunten.reorganized;
 
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ExampleMod implements ModInitializer {
+public class Reorganized implements ModInitializer {
 
     public static final String MOD_ID = "reorganized";
     
