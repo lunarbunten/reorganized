@@ -15,13 +15,14 @@ import net.minecraft.client.gui.screen.recipebook.RecipeBookProvider;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 
 @Environment(value=EnvType.CLIENT)
 public class ROInventoryScreen extends AbstractInventoryScreen<PlayerScreenHandler> implements RecipeBookProvider {
@@ -31,6 +32,8 @@ public class ROInventoryScreen extends AbstractInventoryScreen<PlayerScreenHandl
     private final RecipeBookWidget recipeBook = new RecipeBookWidget();
     private boolean narrow;
     private boolean mouseDown;
+
+    static boolean hideArmor = false;
 
     public ROInventoryScreen(PlayerEntity player) {
         super(player.playerScreenHandler, player.getInventory(), Text.translatable(""));
@@ -47,12 +50,27 @@ public class ROInventoryScreen extends AbstractInventoryScreen<PlayerScreenHandl
     @Override
     protected void init() {
         super.init();
+        
         this.narrow = this.width < 379;
         this.recipeBook.initialize(this.width, this.height, this.client, this.narrow, this.handler);
         this.x = this.recipeBook.findLeftEdge(this.width, this.backgroundWidth);
 
         this.addSelectableChild(this.recipeBook);
         this.setInitialFocus(this.recipeBook);
+
+        addDrawableChild(new TabButton("recipes", false, x + 16, y + 8, Text.literal("um"), (button) -> {
+            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ENTITY_COW_DEATH, 1));
+        }));
+
+        addDrawableChild(new TabButton("crafting", true, x + 140, y + 8, Text.literal("um"), (button) -> {
+            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ENTITY_CHICKEN_HURT, 1));  
+        }));
+
+        addDrawableChild(new TabButton("stats", true, x + 140, y + 30, Text.literal("um"), (button) -> {
+            MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.ENTITY_PIG_HURT, 1)); 
+        }));
+
+        addDrawableChild(new ArmorVisibilityButton(x + 117, y + 9));
     }
 
     @Override
@@ -81,26 +99,25 @@ public class ROInventoryScreen extends AbstractInventoryScreen<PlayerScreenHandl
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         int i = this.x;
         int j = this.y;
-        var id = new Identifier("reorganized", "textures/gui/inventory/main.png");
-        context.drawTexture(id, x, y, 0, 0, backgroundWidth, backgroundHeight);
-        context.drawTexture(new Identifier("reorganized", "textures/gui/inventory/backgrounds/blank.png"), x + 64, y + 8, 0, 0, 50, 70, 50, 70);
+        context.drawTexture(Reorganized.id("textures/gui/inventory/main.png"), x, y, 0, 0, backgroundWidth, backgroundHeight);
+        context.drawTexture(Reorganized.id("textures/gui/inventory/backgrounds/blank.png"), x + 64, y + 8, 0, 0, 50, 70, 50, 70);
         ROInventoryScreen.drawEntity(context, i + 90, j + 72, 30, (float)(i + 90) - this.mouseX, (float)(j + 72 - 50) - this.mouseY, this.client.player);
     }
 
     public static void drawEntity(DrawContext context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
-        float f = (float)Math.atan(mouseX / 40.0f);
-        float g = (float)Math.atan(mouseY / 40.0f);
+        float f = (float)Math.atan(mouseX / 40);
+        float g = (float)Math.atan(mouseY / 40);
         Quaternionf quaternionf = new Quaternionf().rotateZ((float)Math.PI);
-        Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20.0f * ((float)Math.PI / 180));
+        Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20 * ((float)Math.PI / 180));
         quaternionf.mul(quaternionf2);
         float h = entity.bodyYaw;
         float i = entity.getYaw();
         float j = entity.getPitch();
         float k = entity.prevHeadYaw;
         float l = entity.headYaw;
-        entity.bodyYaw = 180.0f + f * 20.0f;
-        entity.setYaw(180.0f + f * 40.0f);
-        entity.setPitch(-g * 20.0f);
+        entity.bodyYaw = 180 + f * 20;
+        entity.setYaw(180 + f * 40);
+        entity.setPitch(-g * 20);
         entity.headYaw = entity.getYaw();
         entity.prevHeadYaw = entity.getYaw();
         ROInventoryScreen.drawEntity(context, x, y, size, quaternionf, quaternionf2, entity);
@@ -123,7 +140,7 @@ public class ROInventoryScreen extends AbstractInventoryScreen<PlayerScreenHandl
             dispatcher.setRotation(quaternionf2);
         }
         dispatcher.setRenderShadows(false);
-        RenderSystem.runAsFancy(() -> dispatcher.render(entity, 0.0, 0.0, 0.0, 0.0f, 1.0f, context.getMatrices(), context.getVertexConsumers(), 0xF000F0));
+        RenderSystem.runAsFancy(() -> dispatcher.render(entity, 0.0, 0.0, 0.0, 0, 1, context.getMatrices(), context.getVertexConsumers(), 0xF000F0));
         context.draw();
         dispatcher.setRenderShadows(true);
         context.getMatrices().pop();

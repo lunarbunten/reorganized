@@ -64,18 +64,13 @@ public abstract class HandlerMixin extends AbstractRecipeScreenHandler<RecipeInp
 
         int i;
 
-        addSlot(new CraftingResultSlot(inventory.player, craftingInput, craftingResult, 0, 154, 28));
+        addSlot(new CraftingResultSlot(inventory.player, craftingInput, craftingResult, 0, 154 + 80, 28));
 
         for (i = 0; i < 2; ++i) {
             for (int j = 0; j < 2; ++j) {
-                addSlot(new Slot(craftingInput, j + i * 2, 98 + j * 18, 18 + i * 18));
+                addSlot(new Slot(craftingInput, j + i * 2, 98 + j * 18 + 80, 18 + i * 18));
             }
         }
-
-        addInventorySlots(i, inventory, player);
-	}
-
-    private void addInventorySlots(int i, PlayerInventory inventory, PlayerEntity player) {
 
         // Armor Slots
 
