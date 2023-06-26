@@ -55,8 +55,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<CraftingContaine
     public static ResourceLocation EMPTY_ARMOR_SLOT_SHIELD;
 
     @Shadow
-    static void onEquipStack(Player player, EquipmentSlot slot, ItemStack newStack, ItemStack currentStack) {}
-
+    static void onEquipItem(Player player, EquipmentSlot slot, ItemStack newStack, ItemStack currentStack) {}
 
     @Inject(at = @At("TAIL"), method = "<init>")
 	private void init(Inventory inventory, boolean onServer, final Player player, CallbackInfo info) {
@@ -80,7 +79,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<CraftingContaine
 
                 @Override
                 public void setByPlayer(ItemStack stack) {
-                    onEquipStack(player, equipmentSlot, stack, getItem());
+                    onEquipItem(player, equipmentSlot, stack, getItem());
                     super.setByPlayer(stack);
                 }
 
@@ -130,7 +129,7 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<CraftingContaine
 
             @Override
             public void setByPlayer(ItemStack stack) {
-                onEquipStack(player, EquipmentSlot.OFFHAND, stack, getItem());
+                onEquipItem(player, EquipmentSlot.OFFHAND, stack, getItem());
                 super.setByPlayer(stack);
             }
 
