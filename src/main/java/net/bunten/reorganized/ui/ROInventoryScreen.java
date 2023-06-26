@@ -18,6 +18,7 @@ import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -130,10 +131,14 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         mouseY = my;
     }
 
+    public ResourceLocation getPlayerBackgroundTexture() {
+        return Reorganized.id("textures/gui/inventory/backgrounds/blank.png");
+    }
+
     @Override
     protected void renderBg(GuiGraphics context, float delta, int mx, int my) {
         context.blit(Reorganized.id("textures/gui/inventory/main.png"), leftPos, topPos, 0, 0, imageWidth, imageHeight);
-        context.blit(Reorganized.id("textures/gui/inventory/backgrounds/blank.png"), leftPos + 64, topPos + 8, 0, 0, 50, 70, 50, 70);
+        context.blit(getPlayerBackgroundTexture(), leftPos + 64, topPos + 8, 0, 0, 50, 70, 50, 70);
         ROInventoryScreen.drawEntity(context, leftPos + 90, topPos + 72, 30, (float)(leftPos + 90) - mouseX, (float)(topPos + 72 - 50) - mouseY, minecraft.player);
     }
 
