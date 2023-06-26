@@ -9,8 +9,11 @@ import net.minecraft.network.chat.Component;
 
 public class ArmorVisibilityButton extends Button {
 
-    public ArmorVisibilityButton(int x, int y, OnPress onPress) {
+    private ROInventoryScreen screen;
+
+    public ArmorVisibilityButton(ROInventoryScreen screen, int x, int y, OnPress onPress) {
         super(x, y, 18, 18, Component.literal("PLACEHOLDER"), onPress, DEFAULT_NARRATION);
+        this.screen = screen;
     }
 
     @Override
@@ -18,6 +21,10 @@ public class ArmorVisibilityButton extends Button {
         context.setColor(1, 1, 1, alpha);
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        context.blit(Reorganized.id("textures/gui/inventory/main.png"), getX(), getY(), 177 + (ROInventoryScreen.hideArmor ? 18 : 0), 0, width, height);
+
+        int u = 1 + (screen.hideArmor ? 36 : 0) + (isHovered() ? 18 : 0);
+        
+        context.blit(Reorganized.id("textures/gui/inventory/main.png"), getX(), getY(), u, 237, width, height);
+        context.blit(Reorganized.id("textures/gui/inventory/main.png"), getX(), getY(), screen.hideArmor ? 19 : 1, 219 - (screen.hideArmor ? 2 : 0), width, height);
     }
 }

@@ -36,7 +36,7 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     private boolean narrow;
     private boolean mouseDown;
 
-    static boolean hideArmor = false;
+    public boolean hideArmor = false;
 
     public ROInventoryScreen(Player player) {
         super(player.inventoryMenu, player.getInventory(), Component.translatable(""));
@@ -87,7 +87,7 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PIG_HURT, 1)); 
         }));
 
-        addRenderableWidget(new ArmorVisibilityButton(leftPos + 117, topPos + 9, (b) -> hideArmor = !hideArmor));
+        addRenderableWidget(new ArmorVisibilityButton(this, leftPos + 117, topPos + 9, (b) -> hideArmor = !hideArmor));
     }
 
     @Override
