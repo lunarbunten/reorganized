@@ -1,14 +1,12 @@
 {
-  "required": true,
-  "package": "net.bunten.reorganized.mixin",
-  "compatibilityLevel": "JAVA_17",
-  "mixins": [
-    "AbstractInventoryScreenMixin",
-    "CraftingScreenHandlerAccessor",
-    "PlayerAccessor",
-    "PlayerEntityMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
+	"required": true,
+	"package": "net.bunten.reorganized.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"AbstractInventoryScreenMixin",
+		"HandlerMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
 	}
 }
