@@ -1,15 +1,14 @@
 package net.bunten.reorganized;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.text.Text;
-
-public class ArmorVisibilityButton extends ButtonWidget {
+public class ArmorVisibilityButton extends Button {
 
     public ArmorVisibilityButton(int x, int y) {
-        super(x, y, 18, 18, Text.literal("PLACEHOLDER"), (button) -> {}, DEFAULT_NARRATION_SUPPLIER);
+        super(x, y, 18, 18, Component.literal("PLACEHOLDER"), (button) -> {}, DEFAULT_NARRATION);
     }
 
     @Override
@@ -18,10 +17,10 @@ public class ArmorVisibilityButton extends ButtonWidget {
     }
 
     @Override
-    protected void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
-        context.setShaderColor(1, 1, 1, alpha);
+    protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
+        context.setColor(1, 1, 1, alpha);
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        context.drawTexture(Reorganized.id("textures/gui/inventory/main.png"), getX(), getY(), 177 + (ROInventoryScreen.hideArmor ? 18 : 0), 0, width, height);
+        context.blit(Reorganized.id("textures/gui/inventory/main.png"), getX(), getY(), 177 + (ROInventoryScreen.hideArmor ? 18 : 0), 0, width, height);
     }
 }
