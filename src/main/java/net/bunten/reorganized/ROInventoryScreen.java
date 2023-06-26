@@ -11,10 +11,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
-import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookProvider;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.render.DiffuseLighting;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.entity.LivingEntity;
@@ -39,33 +37,22 @@ implements RecipeBookProvider {
     public ROInventoryScreen(PlayerEntity player) {
         super(player.playerScreenHandler, player.getInventory(), (Text)Text.translatable((String)"container.crafting"));
         this.titleX = 97;
+        this.backgroundWidth = 176;
+        this.backgroundHeight = 180;
     }
 
     @Override
     public void handledScreenTick() {
-        if (this.client.interactionManager.hasCreativeInventory()) {
-            this.client.setScreen(new CreativeInventoryScreen(this.client.player, this.client.player.networkHandler.getEnabledFeatures(), this.client.options.getOperatorItemsTab().getValue()));
-            return;
-        }
         this.recipeBook.update();
     }
 
     @Override
     protected void init() {
-        if (this.client.interactionManager.hasCreativeInventory()) {
-            this.client.setScreen(new CreativeInventoryScreen(this.client.player, this.client.player.networkHandler.getEnabledFeatures(), this.client.options.getOperatorItemsTab().getValue()));
-            return;
-        }
         super.init();
         this.narrow = this.width < 379;
         this.recipeBook.initialize(this.width, this.height, this.client, this.narrow, (AbstractRecipeScreenHandler<?>)this.handler);
         this.x = this.recipeBook.findLeftEdge(this.width, this.backgroundWidth);
-        this.addDrawableChild(new TexturedButtonWidget(this.x + 104, this.height / 2 - 22, 20, 18, 0, 0, 19, RECIPE_BUTTON_TEXTURE, button -> {
-            this.recipeBook.toggleOpen();
-            this.x = this.recipeBook.findLeftEdge(this.width, this.backgroundWidth);
-            button.setPosition(this.x + 104, this.height / 2 - 22);
-            this.mouseDown = true;
-        }));
+
         this.addSelectableChild(this.recipeBook);
         this.setInitialFocus(this.recipeBook);
     }
@@ -96,8 +83,9 @@ implements RecipeBookProvider {
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         int i = this.x;
         int j = this.y;
-        context.drawTexture(BACKGROUND_TEXTURE, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
-        ROInventoryScreen.drawEntity(context, i + 51, j + 75, 30, (float)(i + 51) - this.mouseX, (float)(j + 75 - 50) - this.mouseY, (LivingEntity)this.client.player);
+        var id = new Identifier("reorganized", "textures/gui/inventory/main.png");
+        context.drawTexture(id, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        ROInventoryScreen.drawEntity(context, i + 90, j + 75, 30, (float)(i + 90) - this.mouseX, (float)(j + 75 - 50) - this.mouseY, (LivingEntity)this.client.player);
     }
 
     public static void drawEntity(DrawContext context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
