@@ -1,5 +1,6 @@
 package net.bunten.reorganized.ui;
 
+import net.bunten.reorganized.mixin.RecipeBookComponentAccessor;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -85,7 +86,7 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         });
 
         recipeTabButton.setTooltip(Tooltip.create(Component.literal("Recipe Book")));
-        
+
         narrow = width < 379;
         recipeBook.init(width, height, minecraft, narrow, menu);
         leftPos = recipeBook.updateScreenPosition(width, imageWidth);
@@ -212,9 +213,20 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     }
 
     @Override
-    protected boolean hasClickedOutside(double mx, double my, int left, int top, int button) {
-        boolean bl = mx < (double)left || my < (double)top || mx >= (double)(left + imageWidth) || my >= (double)(top + imageHeight);
-        return recipeBook.hasClickedOutside(mx, my, leftPos, topPos, imageWidth, imageHeight, button) && bl;
+    protected boolean hasClickedOutside(double cursorX, double cursorY, int screenLeft, int screenTop, int button) {
+        boolean recipeBookSize;
+
+
+        boolean inventoryTop = cursorX < (double)(screenLeft + 37) || cursorY < (double)screenTop || cursorX >= (double)((screenLeft - 37) + imageWidth) || cursorY >= (double)(screenTop + imageHeight);
+        boolean inventoryBottom = cursorX < (double)screenLeft || cursorY < (double)(screenTop + 80) || cursorX >= (double)(screenLeft + imageWidth) || cursorY >= (double)(screenTop + imageHeight);
+
+        if (recipeBook.isVisible()) {
+            boolean bl2 = (double)(leftPos - 147) < cursorX && cursorX < (double)leftPos && (double)topPos < cursorY && cursorY < (double)(topPos + imageHeight);
+            recipeBookSize = !bl2 && !((RecipeBookComponentAccessor)recipeBook).getSelectedTab().isHoveredOrFocused();
+        } else recipeBookSize = true;
+
+
+        return recipeBookSize && inventoryTop && inventoryBottom;
     }
 
     @Override
