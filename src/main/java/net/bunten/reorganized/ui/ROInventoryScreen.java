@@ -12,7 +12,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button.OnPress;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
@@ -38,6 +38,14 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
 
     public boolean hideArmor = false;
 
+    public String selectedLeftButton;
+    public String selectedRightButton;
+
+    private InventoryTabButton recipeTabButton;
+    private InventoryTabButton craftingTabButton;
+    private InventoryTabButton statsTabButton;
+    private ArmorVisibilityButton armorVisibilityButton;
+
     public ROInventoryScreen(Player player) {
         super(player.inventoryMenu, player.getInventory(), Component.translatable(""));
         titleLabelX = 97;
@@ -50,13 +58,37 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         recipeBook.tick();
     }
 
-    private void reload() {
-        minecraft.setScreen(new ROInventoryScreen(minecraft.player));
-    }
-
     @Override
     protected void init() {
         super.init();
+
+        craftingTabButton = new InventoryTabButton(this, "crafting", true, leftPos + 140, topPos + 58, (button) -> {
+            Reorganized.playUi(SoundEvents.CHICKEN_HURT);
+        });
+
+        craftingTabButton.setTooltip(Tooltip.create(Component.literal("Crafting")));
+
+        statsTabButton = new InventoryTabButton(this, "stats", true, leftPos + 140, topPos + 36, (button) -> {
+            Reorganized.playUi(SoundEvents.PIG_HURT);
+        });
+
+        statsTabButton.setTooltip(Tooltip.create(Component.literal("Stats")));
+        
+        armorVisibilityButton = new ArmorVisibilityButton(this, leftPos + 117, topPos + 9, (b) -> hideArmor = !hideArmor);
+        armorVisibilityButton.setTooltip(Tooltip.create(Component.literal(hideArmor ? "Show Armor" : "Hide Armor")));
+
+        recipeTabButton = new InventoryTabButton(this, "recipes", false, leftPos + 16, topPos + 58, (b) -> {
+            recipeBook.toggleVisibility();
+            leftPos = recipeBook.updateScreenPosition(width, imageWidth);
+            mouseDown = true;
+
+            craftingTabButton.setPosition(leftPos + 140, topPos + 58);
+            statsTabButton.setPosition(leftPos + 140, topPos + 36);
+            armorVisibilityButton.setPosition(leftPos + 117, topPos + 9);
+            recipeTabButton.setPosition(leftPos + 16, topPos + 58);
+        });
+
+        recipeTabButton.setTooltip(Tooltip.create(Component.literal("Recipe Book")));
         
         narrow = width < 379;
         recipeBook.init(width, height, minecraft, narrow, menu);
@@ -65,29 +97,10 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         addWidget(recipeBook);
         setInitialFocus(recipeBook);
 
-        OnPress press = (b) -> {
-            recipeBook.toggleVisibility();
-            leftPos = recipeBook.updateScreenPosition(width, imageWidth);
-            b.setPosition(leftPos + 104, height / 2 - 22);
-            mouseDown = true;
-            reload();
-        };
-
-        if (!recipeBook.isVisible()) {
-            addRenderableWidget(new InventoryTabButton("recipes", false, leftPos + 16, topPos + 8, Component.literal("um"), press));
-        } else {
-            addRenderableWidget(new TabHideButton(leftPos + 6, topPos + 14, 28, 61, press));
-        }
-
-        addRenderableWidget(new InventoryTabButton("crafting", true, leftPos + 140, topPos + 8, Component.literal("um"), (button) -> {
-            Reorganized.playUi(SoundEvents.CHICKEN_HURT);
-        }));
-
-        addRenderableWidget(new InventoryTabButton("stats", true, leftPos + 140, topPos + 30, Component.literal("um"), (button) -> {
-            Reorganized.playUi(SoundEvents.PIG_HURT);
-        }));
-
-        addRenderableWidget(new ArmorVisibilityButton(this, leftPos + 117, topPos + 9, (b) -> hideArmor = !hideArmor));
+        addRenderableWidget(recipeTabButton);
+        addRenderableWidget(craftingTabButton);
+        addRenderableWidget(statsTabButton);
+        addRenderableWidget(armorVisibilityButton);
     }
 
     @Override
