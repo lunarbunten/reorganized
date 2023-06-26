@@ -76,7 +76,7 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         if (!recipeBook.isVisible()) {
             addRenderableWidget(new InventoryTabButton("recipes", false, leftPos + 16, topPos + 8, Component.literal("um"), press));
         } else {
-            addRenderableWidget(new TabHideButton(leftPos - 1, topPos + 9, 38, 68, press));
+            addRenderableWidget(new TabHideButton(leftPos + 6, topPos + 14, 28, 61, press));
         }
 
         addRenderableWidget(new InventoryTabButton("crafting", true, leftPos + 140, topPos + 8, Component.literal("um"), (button) -> {

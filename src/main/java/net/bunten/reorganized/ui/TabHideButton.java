@@ -20,7 +20,7 @@ public class TabHideButton extends Button {
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
         context.pose().translate(0, 0, 200);
-        context.blit(Reorganized.id("textures/gui/inventory/tabs/null.png"), getX(), getY(), 0, 0, width, height, 16, 16);
+        context.blit(Reorganized.id("textures/gui/inventory/close.png"), getX(), getY(), isHovered() ? width : 0, 0, width, height);
         context.pose().popPose();
     }
 }
