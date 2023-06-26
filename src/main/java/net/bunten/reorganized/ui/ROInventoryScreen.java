@@ -81,11 +81,6 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
             recipeBook.toggleVisibility();
             leftPos = recipeBook.updateScreenPosition(width, imageWidth);
             mouseDown = true;
-
-            craftingTabButton.setPosition(leftPos + 140, topPos + 58);
-            statsTabButton.setPosition(leftPos + 140, topPos + 36);
-            armorVisibilityButton.setPosition(leftPos + 117, topPos + 9);
-            recipeTabButton.setPosition(leftPos + 16, topPos + 58);
         });
 
         recipeTabButton.setTooltip(Tooltip.create(Component.literal("Recipe Book")));
