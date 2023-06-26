@@ -35,7 +35,7 @@ implements RecipeBookProvider {
     private boolean mouseDown;
 
     public ROInventoryScreen(PlayerEntity player) {
-        super(player.playerScreenHandler, player.getInventory(), (Text)Text.translatable((String)"container.crafting"));
+        super(player.playerScreenHandler, player.getInventory(), Text.translatable(""));
         this.titleX = 97;
         this.backgroundWidth = 176;
         this.backgroundHeight = 180;
@@ -50,7 +50,7 @@ implements RecipeBookProvider {
     protected void init() {
         super.init();
         this.narrow = this.width < 379;
-        this.recipeBook.initialize(this.width, this.height, this.client, this.narrow, (AbstractRecipeScreenHandler<?>)this.handler);
+        this.recipeBook.initialize(this.width, this.height, this.client, this.narrow, this.handler);
         this.x = this.recipeBook.findLeftEdge(this.width, this.backgroundWidth);
 
         this.addSelectableChild(this.recipeBook);
@@ -85,7 +85,7 @@ implements RecipeBookProvider {
         int j = this.y;
         var id = new Identifier("reorganized", "textures/gui/inventory/main.png");
         context.drawTexture(id, x, y, 0, 0, backgroundWidth, backgroundHeight);
-        ROInventoryScreen.drawEntity(context, i + 90, j + 75, 30, (float)(i + 90) - this.mouseX, (float)(j + 75 - 50) - this.mouseY, (LivingEntity)this.client.player);
+        ROInventoryScreen.drawEntity(context, i + 90, j + 75, 30, (float)(i + 90) - this.mouseX, (float)(j + 75 - 50) - this.mouseY, this.client.player);
     }
 
     public static void drawEntity(DrawContext context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
@@ -114,7 +114,7 @@ implements RecipeBookProvider {
 
     public static void drawEntity(DrawContext context, int x, int y, int size, Quaternionf quaternionf, @Nullable Quaternionf quaternionf2, LivingEntity entity) {
         context.getMatrices().push();
-        context.getMatrices().translate((double)x, (double)y, 50.0);
+        context.getMatrices().translate(x, y, 50.0);
         context.getMatrices().multiplyPositionMatrix(new Matrix4f().scaling(size, size, -size));
         context.getMatrices().multiply(quaternionf);
         DiffuseLighting.method_34742();

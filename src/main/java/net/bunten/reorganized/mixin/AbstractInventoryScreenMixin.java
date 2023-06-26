@@ -13,9 +13,9 @@ import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.text.Text;
 
 @Mixin(InventoryScreen.class)
-public abstract class ExampleMixin extends AbstractInventoryScreen<PlayerScreenHandler> {
+public abstract class AbstractInventoryScreenMixin extends AbstractInventoryScreen<PlayerScreenHandler> {
 
-	public ExampleMixin(PlayerScreenHandler screenHandler, PlayerInventory playerInventory, Text text) {
+	public AbstractInventoryScreenMixin(PlayerScreenHandler screenHandler, PlayerInventory playerInventory, Text text) {
 		super(screenHandler, playerInventory, text);
 	}
 
