@@ -22,7 +22,7 @@ public class ArmorVisibilityButton extends Button {
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
 
-        int u = 1 + (screen.hideArmor ? 36 : 0) + (isHovered() ? 18 : 0);
+        int u = 1 + (screen.hideArmor ? 36 : 0);
         
         context.blit(Reorganized.id("textures/gui/inventory/main.png"), getX(), getY(), u, 237, width, height);
         context.blit(Reorganized.id("textures/gui/inventory/main.png"), getX(), getY(), screen.hideArmor ? 19 : 1, 219 - (screen.hideArmor ? 1 : 0), width, height);

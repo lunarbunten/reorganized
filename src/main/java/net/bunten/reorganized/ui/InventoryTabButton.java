@@ -27,13 +27,13 @@ public class InventoryTabButton extends Button {
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
 
-        int v = isHovered() ? 21 : isOpen() ? 42 : 0;
-        int a = isHovered() ? 1 : isOpen() ? 2 : 0;
+        int mult = isRight ? 1 : -1;
 
         context.pose().translate(0, 0, 200);
 
-        context.blit(Reorganized.id("textures/gui/inventory/buttons.png"), getX(), getY(), 0 + (isRight ? 23 : 0), v, width, height);
-        context.blit(Reorganized.id("textures/gui/inventory/tabs/" + name + ".png"), getX() + (isRight ? 0 : 5) + (a * (isRight ? 1 : -1)), getY() + 2, 0, 0, 16, 16, 16, 16);
+        context.blit(Reorganized.id("textures/gui/inventory/buttons.png"), getX(), getY(), isRight ? width + 1 : 0, isOpen() ? height + 1 : 0, width, height);
+        context.blit(Reorganized.id("textures/gui/inventory/tabs/" + name + ".png"), getX() + (isRight ? 0 : 6) + ((isOpen() ? 2 : 0) * mult), getY() + 2, 0, 0, 16, 16, 16, 16);
+
         context.pose().popPose();
     }
 
