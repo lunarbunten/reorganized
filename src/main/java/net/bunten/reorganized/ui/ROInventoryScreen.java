@@ -3,6 +3,7 @@ package net.bunten.reorganized.ui;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 
@@ -16,7 +17,6 @@ import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
@@ -80,11 +80,11 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         }
 
         addRenderableWidget(new InventoryTabButton("crafting", true, leftPos + 140, topPos + 8, Component.literal("um"), (button) -> {
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHICKEN_HURT, 1));  
+            Reorganized.playUi(SoundEvents.CHICKEN_HURT);
         }));
 
         addRenderableWidget(new InventoryTabButton("stats", true, leftPos + 140, topPos + 30, Component.literal("um"), (button) -> {
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PIG_HURT, 1)); 
+            Reorganized.playUi(SoundEvents.PIG_HURT);
         }));
 
         addRenderableWidget(new ArmorVisibilityButton(this, leftPos + 117, topPos + 9, (b) -> hideArmor = !hideArmor));
