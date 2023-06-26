@@ -3,8 +3,8 @@
 	"package": "net.bunten.reorganized.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"AbstractInventoryScreenMixin",
-		"HandlerMixin"
+		"InventoryMenuMixin",
+		"InventoryScreenMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
