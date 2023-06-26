@@ -26,6 +26,10 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 @Mixin(InventoryMenu.class)
 public abstract class InventoryMenuMixin extends RecipeBookMenu<CraftingContainer> {
 
+    public InventoryMenuMixin(MenuType<?> type, int i) {
+        super(type, i);
+    }
+
     @Shadow
     @Final
     private CraftingContainer craftSlots;
@@ -53,9 +57,6 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<CraftingContaine
     @Shadow
     static void onEquipStack(Player player, EquipmentSlot slot, ItemStack newStack, ItemStack currentStack) {}
 
-    public InventoryMenuMixin(MenuType<?> type, int i) {
-        super(type, i);
-    }
 
     @Inject(at = @At("TAIL"), method = "<init>")
 	private void init(Inventory inventory, boolean onServer, final Player player, CallbackInfo info) {

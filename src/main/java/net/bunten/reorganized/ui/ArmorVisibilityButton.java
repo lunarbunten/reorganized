@@ -1,6 +1,8 @@
-package net.bunten.reorganized;
+package net.bunten.reorganized.ui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+
+import net.bunten.reorganized.Reorganized;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;

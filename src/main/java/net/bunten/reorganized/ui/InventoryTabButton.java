@@ -1,16 +1,18 @@
-package net.bunten.reorganized;
+package net.bunten.reorganized.ui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+
+import net.bunten.reorganized.Reorganized;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
-public class TabButton extends Button {
+public class InventoryTabButton extends Button {
     
     private boolean isRight;
     private String name;
 
-    public TabButton(String name, boolean isRight, int x, int y, Component message, OnPress onPress) {
+    public InventoryTabButton(String name, boolean isRight, int x, int y, Component message, OnPress onPress) {
         super(x, y, 22, 20, message, onPress, DEFAULT_NARRATION);
         this.isRight = isRight;
         this.name = name;

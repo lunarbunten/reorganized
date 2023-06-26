@@ -1,4 +1,4 @@
-package net.bunten.reorganized;
+package net.bunten.reorganized.ui;
 
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
@@ -6,6 +6,7 @@ import org.joml.Quaternionf;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import net.bunten.reorganized.Reorganized;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -57,15 +58,15 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         this.addWidget(this.recipeBook);
         this.setInitialFocus(this.recipeBook);
 
-        addRenderableWidget(new TabButton("recipes", false, leftPos + 16, topPos + 8, Component.literal("um"), (button) -> {
+        addRenderableWidget(new InventoryTabButton("recipes", false, leftPos + 16, topPos + 8, Component.literal("um"), (button) -> {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.COW_DEATH, 1));
         }));
 
-        addRenderableWidget(new TabButton("crafting", true, leftPos + 140, topPos + 8, Component.literal("um"), (button) -> {
+        addRenderableWidget(new InventoryTabButton("crafting", true, leftPos + 140, topPos + 8, Component.literal("um"), (button) -> {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHICKEN_HURT, 1));  
         }));
 
-        addRenderableWidget(new TabButton("stats", true, leftPos + 140, topPos + 30, Component.literal("um"), (button) -> {
+        addRenderableWidget(new InventoryTabButton("stats", true, leftPos + 140, topPos + 30, Component.literal("um"), (button) -> {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PIG_HURT, 1)); 
         }));
 
