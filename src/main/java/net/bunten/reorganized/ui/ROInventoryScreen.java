@@ -11,6 +11,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button.OnPress;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
@@ -27,9 +28,11 @@ import net.minecraft.world.inventory.Slot;
 @Environment(value=EnvType.CLIENT)
 public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryMenu> implements RecipeUpdateListener {
 
+    private final RecipeBookComponent recipeBook = new RecipeBookComponent();
+
     private float mouseX;
     private float mouseY;
-    private final RecipeBookComponent recipeBook = new RecipeBookComponent();
+
     private boolean narrow;
     private boolean mouseDown;
 
@@ -37,30 +40,44 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
 
     public ROInventoryScreen(Player player) {
         super(player.inventoryMenu, player.getInventory(), Component.translatable(""));
-        this.titleLabelX = 97;
-        this.imageWidth = 176;
-        this.imageHeight = 180;
+        titleLabelX = 97;
+        imageWidth = 176;
+        imageHeight = 180;
     }
 
     @Override
     public void containerTick() {
-        this.recipeBook.tick();
+        recipeBook.tick();
+    }
+
+    private void reload() {
+        minecraft.setScreen(new ROInventoryScreen(minecraft.player));
     }
 
     @Override
     protected void init() {
         super.init();
         
-        this.narrow = this.width < 379;
-        this.recipeBook.init(this.width, this.height, this.minecraft, this.narrow, this.menu);
-        this.leftPos = this.recipeBook.updateScreenPosition(this.width, this.imageWidth);
+        narrow = width < 379;
+        recipeBook.init(width, height, minecraft, narrow, menu);
+        leftPos = recipeBook.updateScreenPosition(width, imageWidth);
 
-        this.addWidget(this.recipeBook);
-        this.setInitialFocus(this.recipeBook);
+        addWidget(recipeBook);
+        setInitialFocus(recipeBook);
 
-        addRenderableWidget(new InventoryTabButton("recipes", false, leftPos + 16, topPos + 8, Component.literal("um"), (button) -> {
-            Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.COW_DEATH, 1));
-        }));
+        OnPress press = (b) -> {
+            recipeBook.toggleVisibility();
+            leftPos = recipeBook.updateScreenPosition(width, imageWidth);
+            b.setPosition(leftPos + 104, height / 2 - 22);
+            mouseDown = true;
+            reload();
+        };
+
+        if (!recipeBook.isVisible()) {
+            addRenderableWidget(new InventoryTabButton("recipes", false, leftPos + 16, topPos + 8, Component.literal("um"), press));
+        } else {
+            addRenderableWidget(new TabHideButton(leftPos - 1, topPos + 9, 38, 68, press));
+        }
 
         addRenderableWidget(new InventoryTabButton("crafting", true, leftPos + 140, topPos + 8, Component.literal("um"), (button) -> {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.CHICKEN_HURT, 1));  
@@ -70,43 +87,51 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PIG_HURT, 1)); 
         }));
 
-        addRenderableWidget(new ArmorVisibilityButton(leftPos + 117, topPos + 9));
+        addRenderableWidget(new ArmorVisibilityButton(leftPos + 117, topPos + 9, (b) -> hideArmor = !hideArmor));
     }
 
     @Override
-    protected void renderLabels(GuiGraphics context, int mouseX, int mouseY) {
-        context.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
+    protected void renderLabels(GuiGraphics context, int mx, int my) {
+        context.drawString(font, title, titleLabelX, titleLabelY, 0x404040, false);
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context);
-        if (this.recipeBook.isVisible() && this.narrow) {
-            this.renderBg(context, delta, mouseX, mouseY);
-            this.recipeBook.render(context, mouseX, mouseY, delta);
+    public void render(GuiGraphics context, int mx, int my, float delta) {
+        renderBackground(context);
+        
+        if (recipeBook.isVisible() && narrow) {
+            renderBg(context, delta, mx, my);
+            recipeBook.render(context, mx, my, delta);
         } else {
-            this.recipeBook.render(context, mouseX, mouseY, delta);
-            super.render(context, mouseX, mouseY, delta);
-            this.recipeBook.renderGhostRecipe(context, this.leftPos, this.topPos, false, delta);
+            recipeBook.render(context, mx, my, delta);
+            super.render(context, mx, my, delta);
+            recipeBook.renderGhostRecipe(context, leftPos, topPos, false, delta);
         }
-        this.renderTooltip(context, mouseX, mouseY);
-        this.recipeBook.renderTooltip(context, this.leftPos, this.topPos, mouseX, mouseY);
-        this.mouseX = mouseX;
-        this.mouseY = mouseY;
+
+        if (recipeBook.isVisible()) {
+            context.pose().pushPose();
+            context.pose().translate(0, 0, 150);
+            context.blit(Reorganized.id("textures/gui/inventory/main.png"), leftPos - 9, topPos + 7, 177, 86, 47, 166);
+            context.pose().popPose();
+        }
+
+        renderTooltip(context, mx, my);
+        recipeBook.renderTooltip(context, leftPos, topPos, mx, my);
+
+        mouseX = mx;
+        mouseY = my;
     }
 
     @Override
-    protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
-        int i = this.leftPos;
-        int j = this.topPos;
+    protected void renderBg(GuiGraphics context, float delta, int mx, int my) {
         context.blit(Reorganized.id("textures/gui/inventory/main.png"), leftPos, topPos, 0, 0, imageWidth, imageHeight);
         context.blit(Reorganized.id("textures/gui/inventory/backgrounds/blank.png"), leftPos + 64, topPos + 8, 0, 0, 50, 70, 50, 70);
-        ROInventoryScreen.drawEntity(context, i + 90, j + 72, 30, (float)(i + 90) - this.mouseX, (float)(j + 72 - 50) - this.mouseY, this.minecraft.player);
+        ROInventoryScreen.drawEntity(context, leftPos + 90, topPos + 72, 30, (float)(leftPos + 90) - mouseX, (float)(topPos + 72 - 50) - mouseY, minecraft.player);
     }
 
-    public static void drawEntity(GuiGraphics context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
-        float f = (float)Math.atan(mouseX / 40);
-        float g = (float)Math.atan(mouseY / 40);
+    public static void drawEntity(GuiGraphics context, int x, int y, int size, float mx, float my, LivingEntity entity) {
+        float f = (float)Math.atan(mx / 40);
+        float g = (float)Math.atan(my / 40);
         Quaternionf quaternionf = new Quaternionf().rotateZ((float)Math.PI);
         Quaternionf quaternionf2 = new Quaternionf().rotateX(g * 20 * ((float)Math.PI / 180));
         quaternionf.mul(quaternionf2);
@@ -149,49 +174,49 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
 
     @Override
     protected boolean isHovering(int x, int y, int width, int height, double pointX, double pointY) {
-        return (!this.narrow || !this.recipeBook.isVisible()) && super.isHovering(x, y, width, height, pointX, pointY);
+        return (!narrow || !recipeBook.isVisible()) && super.isHovering(x, y, width, height, pointX, pointY);
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        if (this.recipeBook.mouseClicked(mouseX, mouseY, button)) {
-            this.setFocused(this.recipeBook);
+    public boolean mouseClicked(double mx, double my, int button) {
+        if (recipeBook.mouseClicked(mx, my, button)) {
+            setFocused(recipeBook);
             return true;
         }
-        if (this.narrow && this.recipeBook.isVisible()) {
+        if (narrow && recipeBook.isVisible()) {
             return false;
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(mx, my, button);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
-        if (this.mouseDown) {
-            this.mouseDown = false;
+    public boolean mouseReleased(double mx, double my, int button) {
+        if (mouseDown) {
+            mouseDown = false;
             return true;
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(mx, my, button);
     }
 
     @Override
-    protected boolean hasClickedOutside(double mouseX, double mouseY, int left, int top, int button) {
-        boolean bl = mouseX < (double)left || mouseY < (double)top || mouseX >= (double)(left + this.imageWidth) || mouseY >= (double)(top + this.imageHeight);
-        return this.recipeBook.hasClickedOutside(mouseX, mouseY, this.leftPos, this.topPos, this.imageWidth, this.imageHeight, button) && bl;
+    protected boolean hasClickedOutside(double mx, double my, int left, int top, int button) {
+        boolean bl = mx < (double)left || my < (double)top || mx >= (double)(left + imageWidth) || my >= (double)(top + imageHeight);
+        return recipeBook.hasClickedOutside(mx, my, leftPos, topPos, imageWidth, imageHeight, button) && bl;
     }
 
     @Override
     protected void slotClicked(Slot slot, int slotId, int button, ClickType actionType) {
         super.slotClicked(slot, slotId, button, actionType);
-        this.recipeBook.slotClicked(slot);
+        recipeBook.slotClicked(slot);
     }
 
     @Override
     public void recipesUpdated() {
-        this.recipeBook.recipesUpdated();
+        recipeBook.recipesUpdated();
     }
 
     @Override
     public RecipeBookComponent getRecipeBookComponent() {
-        return this.recipeBook;
+        return recipeBook;
     }
 }

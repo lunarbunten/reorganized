@@ -7,17 +7,20 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
-public class ArmorVisibilityButton extends Button {
+public class TabHideButton extends Button {
 
-    public ArmorVisibilityButton(int x, int y, OnPress onPress) {
-        super(x, y, 18, 18, Component.literal("PLACEHOLDER"), onPress, DEFAULT_NARRATION);
+    public TabHideButton(int x, int y, int width, int height, OnPress onPress) {
+        super(x, y, width, height, Component.literal("PLACEHOLDER"), onPress, DEFAULT_NARRATION);
     }
 
     @Override
     protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
+        context.pose().pushPose();
         context.setColor(1, 1, 1, alpha);
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        context.blit(Reorganized.id("textures/gui/inventory/main.png"), getX(), getY(), 177 + (ROInventoryScreen.hideArmor ? 18 : 0), 0, width, height);
+        context.pose().translate(0, 0, 200);
+        context.blit(Reorganized.id("textures/gui/inventory/tabs/null.png"), getX(), getY(), 0, 0, width, height, 16, 16);
+        context.pose().popPose();
     }
 }
