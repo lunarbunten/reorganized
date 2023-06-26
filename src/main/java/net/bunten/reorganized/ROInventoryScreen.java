@@ -83,7 +83,8 @@ public class ROInventoryScreen extends AbstractInventoryScreen<PlayerScreenHandl
         int j = this.y;
         var id = new Identifier("reorganized", "textures/gui/inventory/main.png");
         context.drawTexture(id, x, y, 0, 0, backgroundWidth, backgroundHeight);
-        ROInventoryScreen.drawEntity(context, i + 90, j + 75, 30, (float)(i + 90) - this.mouseX, (float)(j + 75 - 50) - this.mouseY, this.client.player);
+        context.drawTexture(new Identifier("reorganized", "textures/gui/inventory/backgrounds/blank.png"), x + 64, y + 8, 0, 0, 50, 70, 50, 70);
+        ROInventoryScreen.drawEntity(context, i + 90, j + 72, 30, (float)(i + 90) - this.mouseX, (float)(j + 72 - 50) - this.mouseY, this.client.player);
     }
 
     public static void drawEntity(DrawContext context, int x, int y, int size, float mouseX, float mouseY, LivingEntity entity) {
