@@ -3,6 +3,8 @@ package net.bunten.reorganized.ui;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.player.AbstractClientPlayer;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -50,7 +52,7 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     private boolean narrow;
     private boolean mouseDown;
 
-    public boolean hideArmor = false;
+    public static boolean hideArmor = false;
 
     public InventoryTabButton selectedLeftButton;
     public InventoryTabButton selectedRightButton;
@@ -258,6 +260,7 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     @Override
     protected boolean hasClickedOutside(double cursorX, double cursorY, int screenLeft, int screenTop, int button) {
         boolean recipeBookSize;
+        boolean tabSize;
 
         boolean inventoryTop = cursorX < (double)(screenLeft + 37) || cursorY < (double)screenTop || cursorX >= (double)((screenLeft - 37) + imageWidth) || cursorY >= (double)(screenTop + imageHeight);
         boolean inventoryBottom = cursorX < (double)screenLeft || cursorY < (double)(screenTop + 80) || cursorX >= (double)(screenLeft + imageWidth) || cursorY >= (double)(screenTop + imageHeight);
@@ -267,7 +270,11 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
             recipeBookSize = !bl2 && !((RecipeBookComponentAccessor)recipeTab).getSelectedTab().isHoveredOrFocused();
         } else recipeBookSize = true;
 
-        return recipeBookSize && inventoryTop && inventoryBottom;
+        if (craftingTab.isVisible() || statsTab.isVisible()) {
+            tabSize = cursorX < (double)(screenLeft + 163) || cursorY < (double)(screenTop + 3) || cursorX >= (double)((screenLeft + 92) + imageWidth) || cursorY >= (double)((screenTop - 106) + imageHeight);
+        } else tabSize = true;
+
+        return tabSize && recipeBookSize && inventoryTop && inventoryBottom;
     }
 
     @Override
