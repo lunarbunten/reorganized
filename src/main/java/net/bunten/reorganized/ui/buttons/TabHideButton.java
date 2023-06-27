@@ -1,4 +1,4 @@
-package net.bunten.reorganized.ui;
+package net.bunten.reorganized.ui.buttons;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 

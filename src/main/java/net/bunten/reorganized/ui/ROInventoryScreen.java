@@ -1,6 +1,5 @@
 package net.bunten.reorganized.ui;
 
-import net.bunten.reorganized.mixin.RecipeBookComponentAccessor;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -9,6 +8,9 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.bunten.reorganized.Reorganized;
+import net.bunten.reorganized.mixin.RecipeBookComponentAccessor;
+import net.bunten.reorganized.ui.buttons.ArmorVisibilityButton;
+import net.bunten.reorganized.ui.buttons.InventoryTabButton;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
@@ -31,6 +33,7 @@ import net.minecraft.world.inventory.Slot;
 public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryMenu> implements RecipeUpdateListener {
 
     private final RecipeBookComponent recipeBook = new RecipeBookComponent();
+    private final CraftingTabComponent craftingTab = new CraftingTabComponent(leftPos, topPos);
 
     private float mouseX;
     private float mouseY;
@@ -40,8 +43,8 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
 
     public boolean hideArmor = false;
 
-    public String selectedLeftButton;
-    public String selectedRightButton;
+    public InventoryTabButton selectedLeftButton;
+    public InventoryTabButton selectedRightButton;
 
     private InventoryTabButton recipeTabButton;
     private InventoryTabButton craftingTabButton;
@@ -57,6 +60,7 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
 
     @Override
     public void containerTick() {
+        if (craftingTab.isVisible() && selectedRightButton != craftingTabButton) craftingTab.toggleVisibility();
         recipeBook.tick();
     }
 
@@ -65,7 +69,8 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         super.init();
 
         craftingTabButton = new InventoryTabButton(this, "crafting", true, leftPos + 140, topPos + 58, (button) -> {
-            Reorganized.playUi(SoundEvents.CHICKEN_HURT);
+            craftingTab.toggleVisibility();
+            mouseDown = true;
         });
 
         craftingTabButton.setTooltip(Tooltip.create(Component.literal("Crafting")));
@@ -81,7 +86,6 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
 
         recipeTabButton = new InventoryTabButton(this, "recipes", false, leftPos + 16, topPos + 58, (b) -> {
             recipeBook.toggleVisibility();
-            leftPos = recipeBook.updateScreenPosition(width, imageWidth);
             mouseDown = true;
         });
 
@@ -89,7 +93,6 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
 
         narrow = width < 379;
         recipeBook.init(width, height, minecraft, narrow, menu);
-        leftPos = recipeBook.updateScreenPosition(width, imageWidth);
 
         addWidget(recipeBook);
         setInitialFocus(recipeBook);
@@ -98,6 +101,8 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         addRenderableWidget(craftingTabButton);
         addRenderableWidget(statsTabButton);
         addRenderableWidget(armorVisibilityButton);
+
+        if (recipeBook.isVisible() && selectedLeftButton == null) selectedLeftButton = recipeTabButton;
     }
 
     @Override
@@ -117,6 +122,8 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
             super.render(context, mx, my, delta);
             recipeBook.renderGhostRecipe(context, leftPos, topPos, false, delta);
         }
+
+        if (craftingTab.isVisible()) craftingTab.render(context, mx, my, delta);
 
         if (recipeBook.isVisible()) {
             context.pose().pushPose();
@@ -216,7 +223,6 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     protected boolean hasClickedOutside(double cursorX, double cursorY, int screenLeft, int screenTop, int button) {
         boolean recipeBookSize;
 
-
         boolean inventoryTop = cursorX < (double)(screenLeft + 37) || cursorY < (double)screenTop || cursorX >= (double)((screenLeft - 37) + imageWidth) || cursorY >= (double)(screenTop + imageHeight);
         boolean inventoryBottom = cursorX < (double)screenLeft || cursorY < (double)(screenTop + 80) || cursorX >= (double)(screenLeft + imageWidth) || cursorY >= (double)(screenTop + imageHeight);
 
@@ -225,7 +231,6 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
             recipeBookSize = !bl2 && !((RecipeBookComponentAccessor)recipeBook).getSelectedTab().isHoveredOrFocused();
         } else recipeBookSize = true;
 
-
         return recipeBookSize && inventoryTop && inventoryBottom;
     }
 
@@ -233,6 +238,7 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     protected void slotClicked(Slot slot, int slotId, int button, ClickType actionType) {
         super.slotClicked(slot, slotId, button, actionType);
         recipeBook.slotClicked(slot);
+        craftingTab.slotClicked(slot);
     }
 
     @Override

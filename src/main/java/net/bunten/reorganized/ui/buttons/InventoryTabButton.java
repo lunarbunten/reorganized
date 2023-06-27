@@ -1,8 +1,9 @@
-package net.bunten.reorganized.ui;
+package net.bunten.reorganized.ui.buttons;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.bunten.reorganized.Reorganized;
+import net.bunten.reorganized.ui.ROInventoryScreen;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -38,7 +39,7 @@ public class InventoryTabButton extends Button {
     }
 
     private boolean isOpen() {
-        return isRight ? screen.selectedRightButton == name : screen.selectedLeftButton == name;
+        return isRight ? screen.selectedRightButton == this : screen.selectedLeftButton == this;
     }
 
     @Override
@@ -46,9 +47,9 @@ public class InventoryTabButton extends Button {
         super.onPress();
 
         if (isOpen()) {
-            if (isRight) screen.selectedRightButton = "empty"; else screen.selectedLeftButton = "empty";
+            if (isRight) screen.selectedRightButton = null; else screen.selectedLeftButton = null;
         } else {
-            if (isRight) screen.selectedRightButton = name; else screen.selectedLeftButton = name;
+            if (isRight) screen.selectedRightButton = this; else screen.selectedLeftButton = this;
         }
     }
 }
