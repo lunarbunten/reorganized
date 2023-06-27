@@ -46,7 +46,7 @@ public class StatsTabComponent extends AbstractTabComponent {
 
     protected void renderStats(GuiGraphics context, int mx, int my, float delta) {
         int ix = (width + 150) / 2 + 11;
-        int iy = (height - 175) / 2 + 19;
+        int iy = (height - 175) / 2 + 22;
         int ity = iy + 1;
 
         int x = ix;
