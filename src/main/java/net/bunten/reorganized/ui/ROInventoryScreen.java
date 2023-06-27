@@ -1,5 +1,8 @@
 package net.bunten.reorganized.ui;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -16,13 +19,14 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
@@ -32,8 +36,13 @@ import net.minecraft.world.inventory.Slot;
 @Environment(value=EnvType.CLIENT)
 public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryMenu> implements RecipeUpdateListener {
 
-    private final RecipeBookComponent recipeBook = new RecipeBookComponent();
-    private final CraftingTabComponent craftingTab = new CraftingTabComponent(leftPos, topPos);
+    private final List<InventoryTabButton> tabButtons = new ArrayList<>();
+    private final List<InventoryTabButton> leftSideTabButtons = new ArrayList<>();
+    private final List<InventoryTabButton> rightSideTabButtons = new ArrayList<>();
+
+    private final <T extends GuiEventListener & NarratableEntry> List<T> getTabWidgets() {
+        return new ArrayList<>();
+    }
 
     private float mouseX;
     private float mouseY;
@@ -47,8 +56,14 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     public InventoryTabButton selectedRightButton;
 
     private InventoryTabButton recipeTabButton;
+    private final RecipeBookComponent recipeTab = new RecipeBookComponent();
+
     private InventoryTabButton craftingTabButton;
+    private final CraftingTabComponent craftingTab = new CraftingTabComponent();
+
     private InventoryTabButton statsTabButton;
+    private final StatsTabComponent statsTab = new StatsTabComponent();
+
     private ArmorVisibilityButton armorVisibilityButton;
 
     public ROInventoryScreen(Player player) {
@@ -58,16 +73,19 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         imageHeight = 180;
     }
 
-    @Override
-    public void containerTick() {
+    private void disableOldTabs() {
+        if (recipeTab.isVisible() && selectedLeftButton != recipeTabButton) recipeTab.toggleVisibility();
         if (craftingTab.isVisible() && selectedRightButton != craftingTabButton) craftingTab.toggleVisibility();
-        recipeBook.tick();
+        if (statsTab.isVisible() && selectedRightButton != statsTabButton) statsTab.toggleVisibility();
     }
 
     @Override
-    protected void init() {
-        super.init();
+    public void containerTick() {
+        recipeTab.tick();
+        disableOldTabs();
+    }
 
+    private void initButtons() {
         craftingTabButton = new InventoryTabButton(this, "crafting", true, leftPos + 140, topPos + 58, (button) -> {
             craftingTab.toggleVisibility();
             mouseDown = true;
@@ -76,33 +94,51 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         craftingTabButton.setTooltip(Tooltip.create(Component.literal("Crafting")));
 
         statsTabButton = new InventoryTabButton(this, "stats", true, leftPos + 140, topPos + 36, (button) -> {
-            Reorganized.playUi(SoundEvents.PIG_HURT);
-        });
-
-        statsTabButton.setTooltip(Tooltip.create(Component.literal("Stats")));
-        
-        armorVisibilityButton = new ArmorVisibilityButton(this, leftPos + 117, topPos + 9, (b) -> hideArmor = !hideArmor);
-        armorVisibilityButton.setTooltip(Tooltip.create(Component.literal(hideArmor ? "Show Armor" : "Hide Armor")));
-
-        recipeTabButton = new InventoryTabButton(this, "recipes", false, leftPos + 16, topPos + 58, (b) -> {
-            recipeBook.toggleVisibility();
+            statsTab.toggleVisibility();
             mouseDown = true;
         });
 
-        recipeTabButton.setTooltip(Tooltip.create(Component.literal("Recipe Book")));
+        statsTabButton.setTooltip(Tooltip.create(Component.literal("Stats")));
+
+        recipeTabButton = new InventoryTabButton(this, "recipes", false, leftPos + 16, topPos + 58, (b) -> {
+            recipeTab.toggleVisibility();
+            mouseDown = true;
+        });
+
+        recipeTabButton.setTooltip(Tooltip.create(Component.literal("Recipe Book")));    
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+
+        initButtons();
 
         narrow = width < 379;
-        recipeBook.init(width, height, minecraft, narrow, menu);
 
-        addWidget(recipeBook);
-        setInitialFocus(recipeBook);
+        recipeTab.init(width, height, minecraft, narrow, menu);
+        craftingTab.init(width, height, minecraft);
+        statsTab.init(width, height, minecraft);
+        if (recipeTab.isVisible() && selectedLeftButton == null) selectedLeftButton = recipeTabButton;
 
-        addRenderableWidget(recipeTabButton);
-        addRenderableWidget(craftingTabButton);
-        addRenderableWidget(statsTabButton);
+        tabButtons.add(recipeTabButton);
+        getTabWidgets().add(recipeTab);
+        tabButtons.add(craftingTabButton);
+        getTabWidgets().add(craftingTab);
+        tabButtons.add(statsTabButton);
+        getTabWidgets().add(statsTab);
+
+        tabButtons.forEach((button) -> {
+            if (button.isRightSided()) rightSideTabButtons.add(button); else leftSideTabButtons.add(button);
+            addRenderableWidget(button);
+        });
+
+        getTabWidgets().forEach((widget) -> addWidget(widget));
+
+        armorVisibilityButton = new ArmorVisibilityButton(this, leftPos + 117, topPos + 9, (b) -> hideArmor = !hideArmor);
+        armorVisibilityButton.setTooltip(Tooltip.create(Component.literal(hideArmor ? "Show Armor" : "Hide Armor")));
+
         addRenderableWidget(armorVisibilityButton);
-
-        if (recipeBook.isVisible() && selectedLeftButton == null) selectedLeftButton = recipeTabButton;
     }
 
     @Override
@@ -114,18 +150,18 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     public void render(GuiGraphics context, int mx, int my, float delta) {
         renderBackground(context);
         
-        if (recipeBook.isVisible() && narrow) {
+        if (recipeTab.isVisible() && narrow) {
             renderBg(context, delta, mx, my);
-            recipeBook.render(context, mx, my, delta);
+            recipeTab.render(context, mx, my, delta);
         } else {
-            recipeBook.render(context, mx, my, delta);
+            recipeTab.render(context, mx, my, delta);
             super.render(context, mx, my, delta);
-            recipeBook.renderGhostRecipe(context, leftPos, topPos, false, delta);
+            recipeTab.renderGhostRecipe(context, leftPos, topPos, false, delta);
         }
 
         if (craftingTab.isVisible()) craftingTab.render(context, mx, my, delta);
-
-        if (recipeBook.isVisible()) {
+        if (statsTab.isVisible()) statsTab.render(context, mx, my, delta);
+        if (recipeTab.isVisible()) {
             context.pose().pushPose();
             context.pose().translate(0, 0, 150);
             context.blit(Reorganized.id("textures/gui/inventory/main.png"), leftPos - 9, topPos + 7, 177, 86, 47, 166);
@@ -133,7 +169,7 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         }
 
         renderTooltip(context, mx, my);
-        recipeBook.renderTooltip(context, leftPos, topPos, mx, my);
+        recipeTab.renderTooltip(context, leftPos, topPos, mx, my);
 
         mouseX = mx;
         mouseY = my;
@@ -195,16 +231,16 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
 
     @Override
     protected boolean isHovering(int x, int y, int width, int height, double pointX, double pointY) {
-        return (!narrow || !recipeBook.isVisible()) && super.isHovering(x, y, width, height, pointX, pointY);
+        return (!narrow || !recipeTab.isVisible()) && super.isHovering(x, y, width, height, pointX, pointY);
     }
 
     @Override
     public boolean mouseClicked(double mx, double my, int button) {
-        if (recipeBook.mouseClicked(mx, my, button)) {
-            setFocused(recipeBook);
+        if (recipeTab.mouseClicked(mx, my, button)) {
+            setFocused(recipeTab);
             return true;
         }
-        if (narrow && recipeBook.isVisible()) {
+        if (narrow && recipeTab.isVisible()) {
             return false;
         }
         return super.mouseClicked(mx, my, button);
@@ -226,9 +262,9 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         boolean inventoryTop = cursorX < (double)(screenLeft + 37) || cursorY < (double)screenTop || cursorX >= (double)((screenLeft - 37) + imageWidth) || cursorY >= (double)(screenTop + imageHeight);
         boolean inventoryBottom = cursorX < (double)screenLeft || cursorY < (double)(screenTop + 80) || cursorX >= (double)(screenLeft + imageWidth) || cursorY >= (double)(screenTop + imageHeight);
 
-        if (recipeBook.isVisible()) {
+        if (recipeTab.isVisible()) {
             boolean bl2 = (double)(leftPos - 147) < cursorX && cursorX < (double)leftPos && (double)topPos < cursorY && cursorY < (double)(topPos + imageHeight);
-            recipeBookSize = !bl2 && !((RecipeBookComponentAccessor)recipeBook).getSelectedTab().isHoveredOrFocused();
+            recipeBookSize = !bl2 && !((RecipeBookComponentAccessor)recipeTab).getSelectedTab().isHoveredOrFocused();
         } else recipeBookSize = true;
 
         return recipeBookSize && inventoryTop && inventoryBottom;
@@ -237,17 +273,17 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     @Override
     protected void slotClicked(Slot slot, int slotId, int button, ClickType actionType) {
         super.slotClicked(slot, slotId, button, actionType);
-        recipeBook.slotClicked(slot);
+        recipeTab.slotClicked(slot);
         craftingTab.slotClicked(slot);
     }
 
     @Override
     public void recipesUpdated() {
-        recipeBook.recipesUpdated();
+        recipeTab.recipesUpdated();
     }
 
     @Override
     public RecipeBookComponent getRecipeBookComponent() {
-        return recipeBook;
+        return recipeTab;
     }
 }

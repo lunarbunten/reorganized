@@ -20,6 +20,10 @@ public class InventoryTabButton extends Button {
         this.isRight = isRight;
         this.name = name;
     }
+
+    public boolean isRightSided() {
+        return isRight;
+    }
     
     @Override
     protected void renderWidget(GuiGraphics context, int mouseX, int mouseY, float delta) {
