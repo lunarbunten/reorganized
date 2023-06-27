@@ -63,11 +63,11 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<CraftingContaine
 
         int i;
 
-        addSlot(new ResultSlot(inventory.player, craftSlots, resultSlots, 0, 154 + 80, 28));
+        addSlot(new ResultSlot(inventory.player, craftSlots, resultSlots, 0, 154 + 81, 38));
 
         for (i = 0; i < 2; ++i) {
             for (int j = 0; j < 2; ++j) {
-                addSlot(new Slot(craftSlots, j + i * 2, 98 + j * 18 + 80, 18 + i * 18));
+                addSlot(new Slot(craftSlots, j + i * 2, 98 + j * 18 + 81, 28 + i * 18));
             }
         }
 

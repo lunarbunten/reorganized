@@ -150,6 +150,8 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
 
     @Override
     public void render(GuiGraphics context, int mx, int my, float delta) {
+        if (craftingTab.isVisible()) craftingTab.render(context, mx, my, delta);
+        if (statsTab.isVisible()) statsTab.render(context, mx, my, delta);
         renderBackground(context);
         
         if (recipeTab.isVisible() && narrow) {
@@ -161,8 +163,6 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
             recipeTab.renderGhostRecipe(context, leftPos, topPos, false, delta);
         }
 
-        if (craftingTab.isVisible()) craftingTab.render(context, mx, my, delta);
-        if (statsTab.isVisible()) statsTab.render(context, mx, my, delta);
         if (recipeTab.isVisible()) {
             context.pose().pushPose();
             context.pose().translate(0, 0, 150);
