@@ -72,7 +72,7 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
         super(player.inventoryMenu, player.getInventory(), Component.translatable(""));
         titleLabelX = 97;
         imageWidth = 176;
-        imageHeight = 180;
+        imageHeight = 169;
     }
 
     private void disableOldTabs() {

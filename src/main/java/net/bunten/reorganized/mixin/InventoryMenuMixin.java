@@ -63,11 +63,11 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<CraftingContaine
 
         int i;
 
-        addSlot(new ResultSlot(inventory.player, craftSlots, resultSlots, 0, 154 + 81, 38));
+        addSlot(new ResultSlot(inventory.player, craftSlots, resultSlots, 0, 154 + 81, 35));
 
         for (i = 0; i < 2; ++i) {
             for (int j = 0; j < 2; ++j) {
-                addSlot(new Slot(craftSlots, j + i * 2, 98 + j * 18 + 81, 28 + i * 18));
+                addSlot(new Slot(craftSlots, j + i * 2, 98 + j * 18 + 81, 25 + i * 18));
             }
         }
 
@@ -113,14 +113,14 @@ public abstract class InventoryMenuMixin extends RecipeBookMenu<CraftingContaine
 
         for (i = 0; i < 3; ++i) {
             for (int j = 0; j < 9; ++j) {
-                addSlot(new Slot(inventory, j + (i + 1) * 9, 8 + (18 * j), 98 + (18 * i)));
+                addSlot(new Slot(inventory, j + (i + 1) * 9, 8 + (18 * j), 87 + (18 * i)));
             }
         }
 
         // Hotbar
 
         for (i = 0; i < 9; ++i) {
-            addSlot(new Slot(inventory, i, 8 + i * 18, 142 + 14));
+            addSlot(new Slot(inventory, i, 8 + i * 18, 145));
         }
         
         // Offhand Slot

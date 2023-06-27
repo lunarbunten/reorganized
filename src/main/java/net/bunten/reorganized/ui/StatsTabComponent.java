@@ -25,10 +25,12 @@ public class StatsTabComponent extends AbstractTabComponent {
     @Override
     public void render(GuiGraphics context, int mx, int my, float delta) {
         if (!isVisible()) return;
+        
         context.pose().pushPose();
         context.pose().translate(0, 0, 100);
-        int x = (width + 150) / 2 ;
-        int y = (height - 175) / 2;
+
+        int x = (width + 150) / 2;
+        int y = (height - 175) / 2 + 3;
 
         context.blit(Reorganized.id("textures/gui/inventory/stats.png"), x + 9, y + 17, 105, 1, imageWidth, imageHeight, 256, 96);
 

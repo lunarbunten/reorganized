@@ -31,8 +31,8 @@ public class CraftingTabComponent extends AbstractTabComponent {
         if (!isVisible()) return;
         context.pose().pushPose();
         context.pose().translate(0, 0, 100);
-        int x = (width + 150) / 2 ;
-        int y = (height - 175) / 2;
+        int x = (width + 150) / 2;
+        int y = (height - 175) / 2 + 3;
 
         context.blit(Reorganized.id("textures/gui/inventory/crafting.png"), x, y, 0, 0, imageWidth, imageHeight, 128, 96);
 
