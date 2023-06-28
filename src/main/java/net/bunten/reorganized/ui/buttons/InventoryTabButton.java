@@ -37,7 +37,7 @@ public class InventoryTabButton extends Button {
         context.pose().translate(0, 0, 200);
 
         context.blit(Reorganized.id("textures/gui/inventory/buttons.png"), getX(), getY(), isRight ? width + 1 : 0, isOpen() ? height + 1 : 0, width, height);
-        context.blit(Reorganized.id("textures/gui/inventory/tabs/" + name + ".png"), getX() + (isRight ? 0 : 6) + ((isOpen() ? 2 : 0) * mult), getY() + 2, 0, 0, 16, 16, 16, 16);
+        context.blit(Reorganized.id("textures/gui/inventory/icons/" + name + ".png"), getX() + (isRight ? 0 : 6) + ((isOpen() ? 2 : 0) * mult), getY() + 2, 0, 0, 16, 16, 16, 16);
 
         context.pose().popPose();
     }

@@ -8,11 +8,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
-public class ArmorVisibilityButton extends Button {
+public class BackgroundsButton extends Button {
 
     private ROInventoryScreen screen;
 
-    public ArmorVisibilityButton(ROInventoryScreen screen, int x, int y, OnPress onPress) {
+    public BackgroundsButton(ROInventoryScreen screen, int x, int y, OnPress onPress) {
         super(x, y, 18, 18, Component.literal("PLACEHOLDER"), onPress, DEFAULT_NARRATION);
         this.screen = screen;
     }
@@ -23,9 +23,9 @@ public class ArmorVisibilityButton extends Button {
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
 
-        int u = 1 + (screen.hideArmor ? 36 : 0);
+        int u = 45 + (isHovered() ? width : 0);
         
-        context.blit(Reorganized.id("textures/gui/inventory/main.png"), getX(), getY(), u, 237, width, height);
-        context.blit(Reorganized.id("textures/gui/inventory/main.png"), getX(), getY(), screen.hideArmor ? 19 : 1, 219 - (screen.hideArmor ? 1 : 0), width, height);
+        context.blit(Reorganized.id("textures/gui/inventory/buttons.png"), getX(), getY(), u, 0, width, height);
+        context.blit(Reorganized.id("textures/gui/inventory/icons/backgrounds.png"), getX() + 1, getY() + 1 + (isHovered() ? 2 : 0), 0, 0, 16, 16, 16, 16);
     }
 }

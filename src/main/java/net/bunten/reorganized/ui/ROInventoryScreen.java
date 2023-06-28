@@ -3,8 +3,6 @@ package net.bunten.reorganized.ui;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.model.PlayerModel;
-import net.minecraft.client.player.AbstractClientPlayer;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -14,7 +12,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.bunten.reorganized.Reorganized;
 import net.bunten.reorganized.mixin.RecipeBookComponentAccessor;
-import net.bunten.reorganized.ui.buttons.ArmorVisibilityButton;
+import net.bunten.reorganized.ui.buttons.BackgroundsButton;
 import net.bunten.reorganized.ui.buttons.InventoryTabButton;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -29,6 +27,7 @@ import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ClickType;
@@ -52,8 +51,6 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     private boolean narrow;
     private boolean mouseDown;
 
-    public static boolean hideArmor = false;
-
     public InventoryTabButton selectedLeftButton;
     public InventoryTabButton selectedRightButton;
 
@@ -66,7 +63,7 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     private InventoryTabButton statsTabButton;
     private final StatsTabComponent statsTab = new StatsTabComponent();
 
-    private ArmorVisibilityButton armorVisibilityButton;
+    private BackgroundsButton armorVisibilityButton;
 
     public ROInventoryScreen(Player player) {
         super(player.inventoryMenu, player.getInventory(), Component.translatable(""));
@@ -137,8 +134,8 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
 
         getTabWidgets().forEach((widget) -> addWidget(widget));
 
-        armorVisibilityButton = new ArmorVisibilityButton(this, leftPos + 117, topPos + 9, (b) -> hideArmor = !hideArmor);
-        armorVisibilityButton.setTooltip(Tooltip.create(Component.literal(hideArmor ? "Show Armor" : "Hide Armor")));
+        armorVisibilityButton = new BackgroundsButton(this, leftPos + 117, topPos + 9, (b) -> Reorganized.playUi(SoundEvents.WOODEN_DOOR_OPEN));
+        armorVisibilityButton.setTooltip(Tooltip.create(Component.literal("Backgrounds")));
 
         addRenderableWidget(armorVisibilityButton);
     }
