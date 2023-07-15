@@ -26,6 +26,6 @@ public class BackgroundsButton extends Button {
         int u = 45 + (isHovered() ? width : 0);
         
         context.blit(Reorganized.id("textures/gui/inventory/buttons.png"), getX(), getY(), u, 0, width, height);
-        context.blit(Reorganized.id("textures/gui/inventory/icons/backgrounds.png"), getX() + 1, getY() + 1 + (isHovered() ? 2 : 0), 0, 0, 16, 16, 16, 16);
+        context.blit(Reorganized.id("textures/gui/inventory/icons/backgrounds.png"), getX() + 1, getY() + 1 + (isHovered() ? 1 : 0), 0, 0, 16, 16, 16, 16);
     }
 }

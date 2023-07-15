@@ -10,6 +10,13 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Environment(value=EnvType.CLIENT)
 public class StatsTabComponent extends AbstractTabComponent {
@@ -87,9 +94,21 @@ public class StatsTabComponent extends AbstractTabComponent {
         context.drawString(client.font, format.format(player.getAttributeValue(Attributes.ARMOR_TOUGHNESS)), x + 12, ty += dif, 0xAAAAAA, false);
 
         context.blit(Reorganized.id("textures/gui/inventory/stats.png"), x, y += dif, u += 9, 71, 9, 9, 256, 96);
-        context.drawString(client.font, format.format(player.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)), x + 12, ty += dif, 0xAAAAAA, false);
+        context.drawString(client.font, format.format(actualKnockbackResistance(player)), x + 12, ty += dif, 0xAAAAAA, false);
 
         context.blit(Reorganized.id("textures/gui/inventory/stats.png"), x, y += dif, u += 9, 71, 9, 9, 256, 96);
         context.drawString(client.font, xp, x + 12, ty += dif, 0xAAAAAA, false);
+    }
+
+    public AtomicInteger actualKnockbackResistance (Player player) {
+        AtomicInteger i = new AtomicInteger();
+        player.getArmorSlots().forEach(
+                itemStack -> {
+                    if (itemStack.getItem() instanceof ArmorItem armorItem && armorItem.getMaterial() == ArmorMaterials.NETHERITE) {
+                        i.set(i.intValue() + 1);
+                    }
+                }
+        );
+        return i;
     }
 }

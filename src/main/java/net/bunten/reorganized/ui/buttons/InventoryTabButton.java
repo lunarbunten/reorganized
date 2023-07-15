@@ -11,13 +11,15 @@ import net.minecraft.network.chat.Component;
 public class InventoryTabButton extends Button {
     
     private boolean isRight;
+    private boolean hasPressedTexture;
     private String name;
     private ROInventoryScreen screen;
 
-    public InventoryTabButton(ROInventoryScreen screen, String name, boolean isRight, int x, int y, OnPress onPress) {
+    public InventoryTabButton(ROInventoryScreen screen, String name, boolean isRight, boolean hasPressedTexture, int x, int y, OnPress onPress) {
         super(x, y, 22, 20, Component.translatable("reorganized.tab." + name), onPress, DEFAULT_NARRATION);
         this.screen = screen;
         this.isRight = isRight;
+        this.hasPressedTexture = hasPressedTexture;
         this.name = name;
     }
 
@@ -37,7 +39,11 @@ public class InventoryTabButton extends Button {
         context.pose().translate(0, 0, 200);
 
         context.blit(Reorganized.id("textures/gui/inventory/buttons.png"), getX(), getY(), isRight ? width + 1 : 0, isOpen() ? height + 1 : 0, width, height);
-        context.blit(Reorganized.id("textures/gui/inventory/icons/" + name + ".png"), getX() + (isRight ? 0 : 6) + ((isOpen() ? 2 : 0) * mult), getY() + 2, 0, 0, 16, 16, 16, 16);
+        if (hasPressedTexture) {
+            context.blit(isOpen() ? Reorganized.id("textures/gui/inventory/icons/" + name + "_open.png") : Reorganized.id("textures/gui/inventory/icons/" + name + ".png"), getX() + (isRight ? 0 : 6) + ((isOpen() ? 2 : 0) * mult), getY() + 2, 0, 0, 16, 16, 16, 16);
+        } else {
+            context.blit(Reorganized.id("textures/gui/inventory/icons/" + name + ".png"), getX() + (isRight ? 0 : 6) + ((isOpen() ? 2 : 0) * mult), getY() + 2, 0, 0, 16, 16, 16, 16);
+        }
 
         context.pose().popPose();
     }

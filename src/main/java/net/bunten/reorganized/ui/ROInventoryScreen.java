@@ -85,21 +85,21 @@ public class ROInventoryScreen extends EffectRenderingInventoryScreen<InventoryM
     }
 
     private void initButtons() {
-        craftingTabButton = new InventoryTabButton(this, "crafting", true, leftPos + 140, topPos + 58, (button) -> {
+        craftingTabButton = new InventoryTabButton(this, "crafting", true, false, leftPos + 140, topPos + 58, (button) -> {
             craftingTab.toggleVisibility();
             mouseDown = true;
         });
 
         craftingTabButton.setTooltip(Tooltip.create(Component.literal("Crafting")));
 
-        statsTabButton = new InventoryTabButton(this, "stats", true, leftPos + 140, topPos + 36, (button) -> {
+        statsTabButton = new InventoryTabButton(this, "stats", true, false, leftPos + 140, topPos + 36, (button) -> {
             statsTab.toggleVisibility();
             mouseDown = true;
         });
 
         statsTabButton.setTooltip(Tooltip.create(Component.literal("Stats")));
 
-        recipeTabButton = new InventoryTabButton(this, "recipes", false, leftPos + 16, topPos + 58, (b) -> {
+        recipeTabButton = new InventoryTabButton(this, "recipes", false, true,leftPos + 16, topPos + 58, (b) -> {
             recipeTab.toggleVisibility();
             mouseDown = true;
         });
